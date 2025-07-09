@@ -7,6 +7,67 @@
     <script src="index.js"></script>
 </head>
 <body>
-    <button>Click Me Please</button>
+    <div class="creation">
+        
+    </div>
+    <div class="projecttab">
+
+    </div>
+    <div class="container">
+
+    </div>
+
+    <div class="newtodoform hidden">
+        <form action="">
+            <fieldset>
+                <div class="formmain">
+                    <legend>Add a New To-do</legend>
+                    
+                    <label for="todoname">Task:</label>
+                    <input type="text" id="todoname" name="todoname">
+
+                    <label for="tododate">Due Date:</label>
+                    <input type="date" id="tododate" name="tododate">
+
+                    <label for="todopriority">Priority:</label>
+                    <select name="todopriority" id="todopriority">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                    </select>
+
+                    <label for="todonotes">Notes:</label>
+                    <textarea name="todonotes" id="todonotes"></textarea>
+
+                    <label for="todoproject">Project:</label>
+                    <select name="todoproject" id="todoproject">
+
+                    </select>
+                </div>
+
+                <button id="submittodo">Create ToDo</button>
+
+
+            </fieldset>
+        </form>
+    </div>
+    <div class="newprojectform hidden">
+        <form action="">
+            <fieldset>
+                <legend>Add a New Project</legend>
+                <label for="projectname">Project Name:</label>
+                <input type="text" id="projectname" name="projectname">
+
+                <button id="submitproject">Create Project</button>
+            </fieldset>
+        </form>
+    </div>
+
+    <div class="testspace">
+        <p>Mark Complete</p>
+        <p class="checkbox"></p>
+    </div>
+    
 </body>
 </html>

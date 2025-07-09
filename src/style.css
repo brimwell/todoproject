@@ -1,3 +1,49 @@
 body {
     background-color: antiquewhite;
 }
+
+.priority1 {
+    background-color: red;
+}
+
+.priority2 {
+    background-color: orange;
+}
+
+.priority3 {
+    background-color: blue;
+}
+
+.priority4 {
+    background-color: gray;
+}
+
+.hidden {
+    display: none;
+}
+
+.checkbox {
+    border: 1px solid black;
+    width: 2rem;
+    height: 2rem;
+}
+
+.checkbox:hover {
+    background-color: gray;
+}
+
+.checked {
+    background-color: green;
+}
+
+.completebox {
+    border: 1px solid gray;
+    width: 1.5rem;
+    height: 1.5rem;
+    background-color: white;
+    display: inline-block;
+}
+
+.inlinep {
+    display: inline-block;
+}
