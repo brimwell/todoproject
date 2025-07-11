@@ -2,6 +2,40 @@ body {
     background-color: antiquewhite;
 }
 
+h1, h2 ,h3, p, div {
+    padding: 0px;
+    margin: 0px;
+}
+
 .hidden {
     display: none;
+}
+
+.completionbox {
+    border: 1px solid black;
+    width: 1em;
+    height: 1em;
+    background-color: white;
+}
+
+.completionbox:hover {
+    opacity: 0.5;
+}
+
+.complete {
+    background-color: green;
+}
+
+.taskdiv {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin: 20px 20px;
+}
+
+
+
+
+.creation {
+    margin: 20px 0;
 }
