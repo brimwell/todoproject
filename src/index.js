@@ -6,14 +6,14 @@ let id = 0;
 let allTasks = [];
 
 class Task {
-    constructor(name, priority, dueDate, notes) {
+    constructor(name, priority, dueDate, notes, project) {
         this.name = name;
         this.priority = priority;
         this._dueDate = new Date(dueDate);
         this.notes = notes;
         this._id = id;
         this.complete = false;
-        this.project;
+        this.project = project;
         id++;
         allTasks.push(this);
     }
@@ -23,7 +23,10 @@ class Task {
     }
 
     set dueDate(value) {
-        this._dueDate = new Date(value);
+        let date = new Date(value);
+        let offset = date.getTimezoneOffset();
+        date.setMinutes(offset);
+        this._dueDate = date;
     }
 
     changeCompletion() {
@@ -65,151 +68,15 @@ allTasks[2].project = 'Home';
 
 // Starting Visual
 
-// ORIGINAL CODE
-// function showList(list) {
-//     const listContainer = document.querySelector('.tasklist');
-//     listContainer.textContent = '';
-
-//     const uncompletedHeader = document.createElement('h3');
-//     uncompletedHeader.textContent = 'To Do';
-//     listContainer.appendChild(uncompletedHeader);
-
-//     const uncompletedDiv = document.createElement('div');
-//     uncompletedDiv.classList.add('uncompletedbox');
-//     listContainer.appendChild(uncompletedDiv);
-
-//     const completedHeader = document.createElement('h3');
-//     completedHeader.textContent = 'Completed';
-//     listContainer.appendChild(completedHeader);
-
-//     const completedDiv = document.createElement('div');
-//     completedDiv.classList.add('completedbox');
-//     listContainer.appendChild(completedDiv);
-    
-
-//     for (let task of list) {
-
-//         let item = document.createElement('div');
-//         item.classList.add('taskdiv');
-//         item.classList.add('priority' + task.priority);
-//         item.id = 'id' + task._id;
-
-//         let completionBox = document.createElement('div');
-//         completionBox.classList.add('completionbox');
-//         if (task.complete === true) {
-//             completionBox.classList.add('complete');
-//         }
-//         item.appendChild(completionBox);
-
-//         completionBox.addEventListener('click', function() {
-//             let id = event.target.parentElement.id
-//                 .split('')
-//                 .splice(2)
-//                 .join('');
-//             let index = findIndexOfTask(id);
-//             allTasks[index].changeCompletion();
-//             showList(allTasks);
-//         })
-
-//         let taskName = document.createElement('h3');
-//         taskName.textContent = task.name;
-//         item.appendChild(taskName);
-
-//         let taskDate = document.createElement('p');
-//         task.dueDate === 'Invalid Date' ? taskDate.textContent = 'No due date' : taskDate.textContent = task.dueDate;
-//         item.appendChild(taskDate);
-
-//         let taskNotes = document.createElement('p');
-//         taskNotes.textContent = task.notes;
-//         item.appendChild(taskNotes);
-
-//         let deleteBtn = document.createElement('button');
-//         deleteBtn.classList.add('deletebtn');
-//         deleteBtn.textContent = 'Delete';
-//         item.appendChild(deleteBtn);
-
-//         deleteBtn.addEventListener('click', function() {
-//             let id = event.target.parentElement.id
-//                 .split('')
-//                 .splice(2)
-//                 .join('');
-//             deleteTask(id);
-//             showList(allTasks);
-            
-//         })
-
-//         let editBtn = document.createElement('button');
-//         editBtn.classList.add('editbtn');
-//         editBtn.textContent = 'Edit Task';
-//         item.appendChild(editBtn);
-
-//         editBtn.addEventListener('click', function() {
-//             let id = event.target.parentElement.id
-//                 .split('')
-//                 .splice(2)
-//                 .join('');
-//             let index = findIndexOfTask(id);
-
-//             createForm('edit');
-//             const formContainer = document.querySelector('.formcontainer');
-
-//             let newTaskName = document.querySelector('#taskname');
-//             let newTaskDate = document.querySelector('#taskdate');
-//             let newTaskPriority = document.querySelector('#taskpriority');
-//             let newTaskNotes = document.querySelector('#tasknotes');
-
-//             let newDate = new Date(allTasks[index].dueDate);
-//             let year = newDate.getFullYear();
-//             let month = String(newDate.getMonth() + 1).padStart(2, '0');
-//             let day = String(newDate.getDate()).padStart(2, '0');
-//             let formattedDate = `${year}-${month}-${day}`;
-
-//             newTaskName.value = allTasks[index].name;
-//             newTaskDate.value = formattedDate;
-//             newTaskPriority.value = allTasks[index].priority;
-//             newTaskNotes.value = allTasks[index].notes;
-
-//             const submitFormBtn = document.querySelector('.submitformbtn');
-//             submitFormBtn.addEventListener('click', function() {
-//                 event.preventDefault();
-
-//                 allTasks[index].name = newTaskName.value;
-//                 allTasks[index].dueDate = newTaskDate.value;
-//                 allTasks[index].priority = +newTaskPriority.value;
-//                 allTasks[index].notes = newTaskNotes.value;
-
-//                 formContainer.textContent = '';
-
-//                 showList(allTasks);
-//             })
-
-//             const cancelFormBtn = document.querySelector('.cancelformbtn');
-//             cancelFormBtn.addEventListener('click', function() {
-//                 formContainer.textContent = '';
-//             })
-//         })
-
-//         task.complete === false ? uncompletedDiv.appendChild(item) : completedDiv.appendChild(item);
-//     }
-
-//     if (uncompletedDiv.textContent === '') {
-//         let blankStatement = document.createElement('p');
-//         blankStatement.classList.add('taskdiv');
-//         blankStatement.textContent = `You have no To-Do's!`;
-//         uncompletedDiv.appendChild(blankStatement);
-//     }
-//     if (completedDiv.textContent === '') {
-//         let blankStatement = document.createElement('p');
-//         blankStatement.classList.add('taskdiv');
-//         blankStatement.textContent = `You have no Completed Tasks.`;
-//         completedDiv.appendChild(blankStatement);
-//     }
-// }
-
 
 function showList(list) {
     const listContainer = document.querySelector('.tasklist');
     listContainer.textContent = '';
+
+    const calculatedTitle = document.createElement('h2');
+    list === undefined ? calculatedTitle.textContent = 'All Tasks' : calculatedTitle.textContent = list;
+    calculatedTitle.classList.add('calculatedtitle');
+    listContainer.appendChild(calculatedTitle);
 
     const uncompletedHeader = document.createElement('h3');
     uncompletedHeader.textContent = 'To Do';
@@ -232,7 +99,7 @@ function showList(list) {
         if (list === undefined) {
         
         } else if (task.project !== list) {
-            return;
+            continue;
         } 
        
 
@@ -372,12 +239,22 @@ createTaskBtn.addEventListener('click', function() {
         let newTaskDate = document.querySelector('#taskdate');
         let newTaskPriority = document.querySelector('#taskpriority');
         let newTaskNotes = document.querySelector('#tasknotes');
+        let newTaskProject = document.querySelector('#taskproject');
 
-        new Task(newTaskName.value, +newTaskPriority.value, newTaskDate.value, newTaskNotes.value);
+        let projectVal;
+        newTaskProject.value === 'none' ? projectVal = undefined : projectVal = newTaskProject.value;
+
+        let date = new Date(newTaskDate.value);
+        let offset = date.getTimezoneOffset();
+        date.setMinutes(offset);
+
+        new Task(newTaskName.value, +newTaskPriority.value, date, newTaskNotes.value, projectVal);
 
         formContainer.textContent = '';
 
-        showList(allTasks);
+        const calculatedTitle = document.querySelector('.calculatedtitle');
+        calculatedTitle.textContent === 'All Tasks' ? showList() : showList(calculatedTitle.textContent); 
+        
     })
 
     const cancelFormBtn = document.querySelector('.cancelformbtn');
@@ -444,7 +321,7 @@ function createForm(type) {
     formMain.appendChild(priorityInput);
 
     const dateLabel = document.createElement('label');
-    dateLabel.textContent = 'Due Date:';
+    dateLabel.textContent = 'Due Date: ';
     dateLabel.setAttribute('for', 'taskdate');
     formMain.appendChild(dateLabel);
 
@@ -455,7 +332,7 @@ function createForm(type) {
     formMain.appendChild(dateInput);
 
     const notesLabel = document.createElement('label');
-    notesLabel.textContent = 'Notes:';
+    notesLabel.textContent = 'Notes: ';
     notesLabel.setAttribute('for', 'tasknotes');
     formMain.appendChild(notesLabel);
 
@@ -464,6 +341,27 @@ function createForm(type) {
     notesInput.setAttribute('name', 'tasknotes');
     formMain.appendChild(notesInput);
 
+    const projectLabel = document.createElement('label');
+    projectLabel.textContent = 'Project: ';
+    projectLabel.setAttribute('for', 'taskproject');
+    formMain.appendChild(projectLabel);
+
+    const projectInput = document.createElement('select');
+    projectInput.id = 'taskproject';
+    projectInput.setAttribute('name', 'taskpriority');
+        const noneOption = document.createElement('option');
+        noneOption.textContent = 'None';
+        noneOption.setAttribute('value', 'none');
+        projectInput.appendChild(noneOption);
+
+        for (let list of allLists) {
+            const listOption = document.createElement('option');
+            listOption.textContent = list;
+            listOption.setAttribute('value', list);
+            projectInput.appendChild(listOption);
+        }
+    formMain.appendChild(projectInput);
+        
     formFieldSet.appendChild(formMain);
 
     const submitBtn = document.createElement('button');
@@ -531,9 +429,11 @@ createListBtn.addEventListener('click', function() {
         event.preventDefault();
 
         allLists.push(nameInput.value);
-        console.log(allLists);
+
 
         formContainer.textContent = '';
+
+        showListBtns();
     })
 
     const cancelFormBtn = document.querySelector('.cancelformbtn');
@@ -545,7 +445,8 @@ createListBtn.addEventListener('click', function() {
 // Display All Current Lists
 
 function showListBtns() {
-    let listContainer = document.querySelector('.projectlist');
+    let listContainer = document.querySelector('.createdprojectlist');
+    listContainer.textContent = '';
 
     for (let list of allLists) {
         let listBtn = document.createElement('button');
@@ -570,6 +471,7 @@ function showListBtns() {
 
 showListBtns();
 
+// Testing Zone
 
 
 
