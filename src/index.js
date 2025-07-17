@@ -385,7 +385,7 @@ function createForm(type) {
 
 
 // Create List
-let createListBtn = document.querySelector('.createlist');
+let createListBtn = document.querySelector('.createlistbtn');
 createListBtn.addEventListener('click', function() {
     const formContainer = document.querySelector('.formcontainer');
     formContainer.style.display = 'block';  
@@ -456,7 +456,7 @@ function showListBtns() {
     listContainer.textContent = '';
 
     for (let list of allLists) {
-        let listBtn = document.createElement('button');
+        let listBtn = document.createElement('p');
         listBtn.classList.add('listbutton');
         listBtn.textContent = list;
         listBtn.id = list;
@@ -478,7 +478,106 @@ function showListBtns() {
 
 showListBtns();
 
-// Testing Zone
+// New Side Nav Options
+const navOpenBtn = document.querySelector('.opennavbtn');
+navOpenBtn.addEventListener('click', openNav)
+
+const navCloseBtn = document.querySelector('.closenavbtn');
+navCloseBtn.addEventListener('click', closeNav);
 
 
+function openNav() {
+    document.querySelector('.sidenav').style.width = '250px';
+    document.querySelector('#main').style.marginLeft = '250px';
+}
 
+function closeNav() {
+    document.querySelector('.sidenav').style.width = '0';
+    document.querySelector('#main').style.marginLeft = '0';
+}
+
+// Delete List Btn work
+
+const deleteListBtn = document.querySelector('.deletelistbtn');
+deleteListBtn.addEventListener('click', function() {
+    const formContainer = document.querySelector('.formcontainer');
+    formContainer.style.display = 'block';  
+    formContainer.textContent = '';   
+
+    const newForm = document.createElement('form');
+
+    const formFieldSet = document.createElement('fieldset');
+
+    const formLegend = document.createElement('legend');
+    formLegend.textContent = 'Which List Would You Like To Delete?';
+    formFieldSet.appendChild(formLegend);
+
+    const deleteListBox = document.createElement('div');
+    deleteListBox.classList.add('deletelistbox');
+
+        if (allLists == false) {
+            deleteListBox.textContent = 'You have no lists currently!';
+        } else {
+            for (let list of allLists) {
+                let listOption = document.createElement('p');
+                listOption.textContent = list;
+                listOption.classList.add('deletelistoption');
+                listOption.id = 'id' + (allLists.indexOf(list));
+                deleteListBox.appendChild(listOption);
+
+
+                listOption.addEventListener('click', deleteList);
+            }
+        }
+    
+    formFieldSet.appendChild(deleteListBox);
+    
+    const cancelBtn = document.createElement('button');
+    cancelBtn.classList.add('cancelformbtn');
+    cancelBtn.textContent = 'Cancel';
+    formFieldSet.appendChild(cancelBtn);
+
+    cancelBtn.addEventListener('click', function() {
+        formContainer.textContent = '';
+        formContainer.style.display = 'none'; 
+    })
+
+    newForm.appendChild(formFieldSet);
+    formContainer.appendChild(newForm);
+})
+
+function deleteList() {
+    let currentIndex = event.target.id
+        .split('')
+        .splice(2)
+        .join('');
+
+    let listName = event.target.textContent;
+    
+    allLists.splice(currentIndex, 1);
+
+    // Remove This Project Name from all tasks that have it
+    for (let task of allTasks) {
+        if (task.project === listName) {
+            task.project = undefined;
+        }
+    }
+
+    // Change What is Shown if the Deleted List is the One to be deleted
+    let calculatedTitle = document.querySelector('.calculatedtitle');
+    if (listName === calculatedTitle.textContent) {
+        showList();
+    }
+
+    const formContainer = document.querySelector('.formcontainer');
+    formContainer.textContent = '';
+    formContainer.style.display = 'none'; 
+
+    showListBtns();
+}
+
+
+let array = [];
+
+if (array == true) { console.log('True is empty?')};
+if (array == false) {console.log( 'False is empty')};

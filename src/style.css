@@ -16,19 +16,22 @@ h1, h2 ,h3, p, div {
 /* Create Buttons div */
 
 .creation {
-    margin: 20px 20px;
+    margin: 60px 20px;
     
 }
 
 .creation button {
     background-color: white;
-    border: 1px solid blue;
-    padding: 1rem 1.5rem;
+    border: 1px solid #818181;
+    padding: 5px 15px;
     border-radius: 8px;
+    font-size: 36px;
+    background-color: black;
+    color: white;
 }
 
 .creation button:hover {
-    background-color: lightgray;
+    background-color: darkgray;
 }
 
 /* Form Modal Styling */
@@ -90,40 +93,77 @@ form button {
 }
 
 
-
-
-
 /* Project List Section */
 
-.projectlist {
-    margin: 20px;
+.sidenav {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    padding-top: 60px;
+    transition: 0.5s;
 }
 
-.projectlist h3 {
+.sidenav h3 {
     margin: 8px 0;
+    color: #f1f1f1;
+    font-size: 30px;
+    margin-left: 32px;
+    text-decoration: underline;
 }
 
-#all {
-    background-color: white;
-    border: 1px solid blue;
-    border-radius: 8px;
-    padding: 4px 4px;
+
+
+.sidenav p, .sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
 }
 
-.createdprojectlist {
-    margin: 16px 0;
+.sidenav p:hover, .sidenav a:hover {
+    color: #f1f1f1;
+    cursor: pointer;
 }
 
-.createdprojectlist button {
-    background-color: white;
-    border: 1px solid blue;
-    border-radius: 8px;
-    padding: 4px 4px;
-    margin-right: 16px;
+.closenavbtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
 }
 
-.createdprojectlist button:hover, #all:hover {
-    background-color: lightgray;
+hr {
+    width: 50%;
+}
+
+#main {
+    transition: margin-left .5s;
+    padding: 20px;
+}
+
+@media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav p {font-size: 18px;}
+}
+
+.opennavbtn div {
+    width: 35px;
+    height: 5px;
+    background-color: black;
+    margin: 6px 0;
+}
+
+.opennavbtn {
+    margin: 20px 0 0 20px;
+    cursor: pointer;
 }
 
 /* Task List Area */
@@ -157,6 +197,27 @@ form button {
 
 .complete {
     background-color: green;
+}
+
+/* Delete List Form */
+
+.deletelistbox {
+    display: flex;
+    gap: 48px;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.deletelistbox p {
+    font-size: 24px;
+    border-radius: 10px;
+    padding: 8px 16px;
+    text-decoration: underline;
+}
+
+.deletelistbox p:hover {
+    cursor: pointer;
+    background-color: lightgray;
 }
 
 
