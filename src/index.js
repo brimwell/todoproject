@@ -254,33 +254,37 @@ createTaskBtn.addEventListener('click', function() {
 
         const calculatedTitle = document.querySelector('.calculatedtitle');
         calculatedTitle.textContent === 'All Tasks' ? showList() : showList(calculatedTitle.textContent); 
+
+        formContainer.style.display = 'none'; 
         
     })
 
     const cancelFormBtn = document.querySelector('.cancelformbtn');
     cancelFormBtn.addEventListener('click', function() {
         formContainer.textContent = '';
+        formContainer.style.display = 'none'; 
     })
 })
 
 // Create Add TAsk or Edit Task on the fly
 function createForm(type) {
-    const formContainer = document.querySelector('.formcontainer');    
+    const formContainer = document.querySelector('.formcontainer'); 
+    formContainer.style.display = 'block';  
     formContainer.textContent = '';
 
     const newForm = document.createElement('form');
 
     const formFieldSet = document.createElement('fieldset');
 
+    const formLegend = document.createElement('legend');
+    type === 'new' ? formLegend.textContent = 'Add a New To-Do' : formLegend.textContent = 'Edit Your To-Do';
+    formFieldSet.appendChild(formLegend);
+
     const formMain = document.createElement('div');
     formMain.classList.add('formmain');
 
-    const formLegend = document.createElement('legend');
-    type === 'new' ? formLegend.textContent = 'Add a New To-Do' : formLegend.textContent = 'Edit Your To-Do';
-    formMain.appendChild(formLegend);
-
     const nameLabel = document.createElement('label');
-    nameLabel.textContent = 'Task:';
+    nameLabel.textContent = 'Task:  ';
     nameLabel.setAttribute('for', 'taskname');
     formMain.appendChild(nameLabel);
 
@@ -291,7 +295,7 @@ function createForm(type) {
     formMain.appendChild(nameInput);
 
     const priorityLabel = document.createElement('label');
-    priorityLabel.textContent = 'Priority:';
+    priorityLabel.textContent = 'Priority:  ';
     priorityLabel.setAttribute('for', 'taskpriority');
     formMain.appendChild(priorityLabel);
 
@@ -321,7 +325,7 @@ function createForm(type) {
     formMain.appendChild(priorityInput);
 
     const dateLabel = document.createElement('label');
-    dateLabel.textContent = 'Due Date: ';
+    dateLabel.textContent = 'Due Date:  ';
     dateLabel.setAttribute('for', 'taskdate');
     formMain.appendChild(dateLabel);
 
@@ -332,7 +336,7 @@ function createForm(type) {
     formMain.appendChild(dateInput);
 
     const notesLabel = document.createElement('label');
-    notesLabel.textContent = 'Notes: ';
+    notesLabel.textContent = 'Notes:  ';
     notesLabel.setAttribute('for', 'tasknotes');
     formMain.appendChild(notesLabel);
 
@@ -342,7 +346,7 @@ function createForm(type) {
     formMain.appendChild(notesInput);
 
     const projectLabel = document.createElement('label');
-    projectLabel.textContent = 'Project: ';
+    projectLabel.textContent = 'Project:  ';
     projectLabel.setAttribute('for', 'taskproject');
     formMain.appendChild(projectLabel);
 
@@ -383,19 +387,20 @@ function createForm(type) {
 // Create List
 let createListBtn = document.querySelector('.createlist');
 createListBtn.addEventListener('click', function() {
-    const formContainer = document.querySelector('.formcontainer'); 
+    const formContainer = document.querySelector('.formcontainer');
+    formContainer.style.display = 'block';  
     formContainer.textContent = '';   
 
     const newForm = document.createElement('form');
 
     const formFieldSet = document.createElement('fieldset');
 
-    const formMain = document.createElement('div');
-    formMain.classList.add('formmain');
-
     const formLegend = document.createElement('legend');
     formLegend.textContent = 'Add a New List';
-    formMain.appendChild(formLegend);
+    formFieldSet.appendChild(formLegend);
+
+    const formMain = document.createElement('div');
+    formMain.classList.add('formmain');
 
     const nameLabel = document.createElement('label');
     nameLabel.textContent = 'List Name: ';
@@ -432,6 +437,7 @@ createListBtn.addEventListener('click', function() {
 
 
         formContainer.textContent = '';
+        formContainer.style.display = 'none'; 
 
         showListBtns();
     })
@@ -439,6 +445,7 @@ createListBtn.addEventListener('click', function() {
     const cancelFormBtn = document.querySelector('.cancelformbtn');
     cancelFormBtn.addEventListener('click', function() {
         formContainer.textContent = '';
+        formContainer.style.display = 'none'; 
     })
 })
 
