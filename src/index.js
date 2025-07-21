@@ -1,38 +1,11 @@
 import './style.css';
+import { allTasks, Task } from './tasks';
+
+
 
 let allLists = ['Test One', 'Work', 'Home'];
 
-let id = 0;
-let allTasks = [];
 
-class Task {
-    constructor(name, priority, dueDate, notes, project) {
-        this.name = name;
-        this.priority = priority;
-        this._dueDate = new Date(dueDate);
-        this.notes = notes;
-        this._id = id;
-        this.complete = false;
-        this.project = project;
-        id++;
-        allTasks.push(this);
-    }
-
-    get dueDate() {
-        return this._dueDate.toDateString();
-    }
-
-    set dueDate(value) {
-        let date = new Date(value);
-        let offset = date.getTimezoneOffset();
-        date.setMinutes(offset);
-        this._dueDate = date;
-    }
-
-    changeCompletion() {
-        this.complete === false ? this.complete = true : this.complete = false;
-    }
-}
 
 function deleteTask(idOfTask) {
     let index = findIndexOfTask(idOfTask);
@@ -48,23 +21,6 @@ function findIndexOfTask(idOfTask) {
     }
     return allTasks.indexOf(chosenTask);
 }
-
-
-new Task('Clean Bedroom', 2, '7/27/25', 'needs to be done');
-new Task('Wash Dishes', 3, '7/27/25', '');
-new Task('Buy birthday card for Dad', 1, '7/11/25', 'I need to send this out today if I want it to get there by his birthday.');
-new Task('Call Jerry about job', 2, '7/15/25', 'Good lead, possibly');
-new Task('Fix the PS5 controller', 4, '7/31/25', 'for Billys birthday');
-
-
-
-allTasks[0].changeCompletion();
-
-allTasks[0].project = 'Test One';
-allTasks[1].project = 'Work';
-allTasks[2].project = 'Home';
-
-
 
 // Starting Visual
 
@@ -130,80 +86,6 @@ function showList(list) {
         item.appendChild(taskName);
 
         taskName.addEventListener('dblclick', callExpander);
-
-        // let taskDate = document.createElement('p');
-        // task.dueDate === 'Invalid Date' ? taskDate.textContent = 'No due date' : taskDate.textContent = task.dueDate;
-        // item.appendChild(taskDate);
-
-        // let taskNotes = document.createElement('p');
-        // taskNotes.textContent = task.notes;
-        // item.appendChild(taskNotes);
-
-        // let deleteBtn = document.createElement('button');
-        // deleteBtn.classList.add('deletebtn');
-        // deleteBtn.textContent = 'Delete';
-        // item.appendChild(deleteBtn);
-
-        // deleteBtn.addEventListener('click', function() {
-        //     let id = event.target.parentElement.id
-        //         .split('')
-        //         .splice(2)
-        //         .join('');
-        //     deleteTask(id);
-        //     showList(list);
-            
-        // })
-
-        // let editBtn = document.createElement('button');
-        // editBtn.classList.add('editbtn');
-        // editBtn.textContent = 'Edit Task';
-        // item.appendChild(editBtn);
-
-        // editBtn.addEventListener('click', function() {
-        //     let id = event.target.parentElement.id
-        //         .split('')
-        //         .splice(2)
-        //         .join('');
-        //     let index = findIndexOfTask(id);
-
-        //     createForm('edit');
-        //     const formContainer = document.querySelector('.formcontainer');
-
-        //     let newTaskName = document.querySelector('#taskname');
-        //     let newTaskDate = document.querySelector('#taskdate');
-        //     let newTaskPriority = document.querySelector('#taskpriority');
-        //     let newTaskNotes = document.querySelector('#tasknotes');
-
-        //     let newDate = new Date(allTasks[index].dueDate);
-        //     let year = newDate.getFullYear();
-        //     let month = String(newDate.getMonth() + 1).padStart(2, '0');
-        //     let day = String(newDate.getDate()).padStart(2, '0');
-        //     let formattedDate = `${year}-${month}-${day}`;
-
-        //     newTaskName.value = allTasks[index].name;
-        //     newTaskDate.value = formattedDate;
-        //     newTaskPriority.value = allTasks[index].priority;
-        //     newTaskNotes.value = allTasks[index].notes;
-
-        //     const submitFormBtn = document.querySelector('.submitformbtn');
-        //     submitFormBtn.addEventListener('click', function() {
-        //         event.preventDefault();
-
-        //         allTasks[index].name = newTaskName.value;
-        //         allTasks[index].dueDate = newTaskDate.value;
-        //         allTasks[index].priority = +newTaskPriority.value;
-        //         allTasks[index].notes = newTaskNotes.value;
-
-        //         formContainer.textContent = '';
-
-        //         showList(list);
-        //     })
-
-        //     const cancelFormBtn = document.querySelector('.cancelformbtn');
-        //     cancelFormBtn.addEventListener('click', function() {
-        //         formContainer.textContent = '';
-        //     })
-        // })
 
         task.complete === false ? uncompletedDiv.appendChild(item) : completedDiv.appendChild(item);
     }
@@ -588,20 +470,13 @@ function callExpander(event) {
 function expandTask(target) {
     target.removeEventListener('dblclick', callExpander);
 
-    
-
-
     let allVisualTasks = document.querySelectorAll('.taskdiv');
     for (let task of allVisualTasks) {
         if (task.classList.contains('expanded')) {
-            let title = document.querySelector('.calculatedtitle');
-            title.textContent === 'All Tasks' ? showList() : showList(title.textContent);
-            
+            closeMoreThanOne(task);
         }
-
     }
   
-
     let realID =  target.parentElement.id
                 .split('')
                 .splice(2)
@@ -609,7 +484,6 @@ function expandTask(target) {
     
     let parent = target.parentElement;
     parent.classList.add('expanded');
-    
     
     let taskDate = document.createElement('p');
     taskDate.classList.add('taskdate');
@@ -623,7 +497,6 @@ function expandTask(target) {
 
     let buttonsDiv = document.createElement('div');
     buttonsDiv.classList.add('buttons');
-
 
     let deleteBtn = document.createElement('button');
     deleteBtn.classList.add('deletebtn');
@@ -696,30 +569,33 @@ function expandTask(target) {
             })
     })
 
-    parent.addEventListener('dblclick', function() {
-        unExpandTask(target);
-        let title = document.querySelector('.calculatedtitle');
+    parent.addEventListener('dblclick', callUnExpander);
 
-
-        title.textContent === 'All Tasks' ? showList() : showList(title.textContent);
-    });
     event.stopPropagation();
 
 }
 
-function unExpandTask(target) {
-    console.log(target);
-    let parent = target.parentElement;
+function callUnExpander(event) {
+    let selectedDiv;
+    event.target.id === '' ? selectedDiv = event.target.parentElement : selectedDiv = event.target;
+    
+    closeMoreThanOne(selectedDiv);
+    selectedDiv.removeEventListener('dblclick', callUnExpander);
+}
 
+
+function closeMoreThanOne(selectedDiv) {
+    selectedDiv.classList.remove('expanded');
+    removeExpanded(selectedDiv);
+    selectedDiv.addEventListener('dblclick', callExpander);
+}
+
+function removeExpanded(selectedDiv) {
     let taskDate = document.querySelector('.taskdate');
     let taskNotes = document.querySelector('.tasknotes');
     let buttonDiv = document.querySelector('.buttons');
 
-    parent.removeChild(taskDate);
-    parent.removeChild(taskNotes);
-    parent.removeChild(buttonDiv);
-
-    parent.classList.remove('expanded');
-
-    
+    selectedDiv.removeChild(taskDate);
+    selectedDiv.removeChild(taskNotes);
+    selectedDiv.removeChild(buttonDiv);
 }
