@@ -266,9 +266,6 @@ hr {
     grid-template-columns: min-content 2fr 1fr 1fr;
 }
 
-.expanded h3 {
-
-}
 
 .expanded .taskdate {
     grid-column: 4 / 5;
