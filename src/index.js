@@ -2,29 +2,204 @@ import './style.css';
 import { allTasks, Task } from './tasks';
 
 
-
+//  ON PAGE LOAD -- TEST ONLY
 let allLists = ['Test One', 'Work', 'Home'];
 
-
-
-function deleteTask(idOfTask) {
-    let index = findIndexOfTask(idOfTask);
-    allTasks.splice(index, 1);
+// SIDENAV OPEN AND CLOSE FUNCTIONS
+    // ON PAGE LOAD
+function activateNavBtn() {
+    const navOpenBtn = document.querySelector('.opennavbtn');
+    navOpenBtn.addEventListener('click', openNav)
 }
 
-function findIndexOfTask(idOfTask) {
-    let chosenTask;
+function openNav() {
+    document.querySelector('.sidenav').style.width = '250px';
+    document.querySelector('#main').style.marginLeft = '250px';
+    populateSidebar();
+}
+
+function closeNav() {
+    document.querySelector('.sidenav').style.width = '0';
+    document.querySelector('#main').style.marginLeft = '0';
+}
+
+// SIDENAV MENU POPULATION
+function populateSidebar() {
+    let listContainer = document.querySelector('.createdprojectlist');
+    listContainer.textContent = '';
+
+    for (let list of allLists) {
+        let listBtn = document.createElement('p');
+        listBtn.classList.add('listbutton');
+        listBtn.textContent = list;
+        listBtn.id = list;
+
+        listContainer.appendChild(listBtn);
+
+        listBtn.addEventListener('click', function() {
+            showList(event.target.id);
+        })
+    }
+    const seeAllBtn = document.querySelector('#all');
+    seeAllBtn.addEventListener('click', function() {
+        showList();
+    })
+
+    const navCloseBtn = document.querySelector('.closenavbtn');
+    navCloseBtn.addEventListener('click', closeNav);
+
+    const createListBtn = document.querySelector('.createlistbtn');
+    createListBtn.addEventListener('click', createNewList);
+
+    const deleteListBtn = document.querySelector('.deletelistbtn');
+    deleteListBtn.addEventListener('click', chooseListToDelete);
+}
+
+// SIDENAV LIST EDITING
+function createNewList() {
+    const formContainer = document.querySelector('.formcontainer');
+    formContainer.style.display = 'block';  
+    formContainer.textContent = '';   
+
+    const newForm = document.createElement('form');
+
+    const formFieldSet = document.createElement('fieldset');
+
+    const formLegend = document.createElement('legend');
+    formLegend.textContent = 'Add a New List';
+    formFieldSet.appendChild(formLegend);
+
+    const formMain = document.createElement('div');
+    formMain.classList.add('formmain');
+
+    const nameLabel = document.createElement('label');
+    nameLabel.textContent = 'List Name: ';
+    nameLabel.setAttribute('for', 'listname');
+    formMain.appendChild(nameLabel);
+
+    const nameInput = document.createElement('input');
+    nameInput.setAttribute('type', 'text');
+    nameInput.id = 'listname';
+    nameInput.setAttribute('name', 'listname');
+    formMain.appendChild(nameInput);
+
+    formFieldSet.appendChild(formMain);
+
+    const submitBtn = document.createElement('button');
+    submitBtn.classList.add('submitformbtn');
+    submitBtn.textContent = 'Create It!'
+    formFieldSet.appendChild(submitBtn);
+    
+    const cancelBtn = document.createElement('button');
+    cancelBtn.classList.add('cancelformbtn');
+    cancelBtn.textContent = 'Cancel';
+    formFieldSet.appendChild(cancelBtn);
+    
+    newForm.appendChild(formFieldSet);
+
+    formContainer.appendChild(newForm);
+
+
+    submitBtn.addEventListener('click', function() {
+        event.preventDefault();
+
+        allLists.push(nameInput.value);
+
+        formContainer.textContent = '';
+        formContainer.style.display = 'none'; 
+
+        populateSidebar();
+    })
+
+    const cancelFormBtn = document.querySelector('.cancelformbtn');
+    cancelFormBtn.addEventListener('click', function() {
+        formContainer.textContent = '';
+        formContainer.style.display = 'none'; 
+    })
+}
+
+function chooseListToDelete() {
+    const formContainer = document.querySelector('.formcontainer');
+    formContainer.style.display = 'block';  
+    formContainer.textContent = '';   
+
+    const newForm = document.createElement('form');
+
+    const formFieldSet = document.createElement('fieldset');
+
+    const formLegend = document.createElement('legend');
+    formLegend.textContent = 'Which List Would You Like To Delete?';
+    formFieldSet.appendChild(formLegend);
+
+    const deleteListBox = document.createElement('div');
+    deleteListBox.classList.add('deletelistbox');
+
+        if (allLists == false) {
+            deleteListBox.textContent = 'You have no lists currently!';
+        } else {
+            for (let list of allLists) {
+                let listOption = document.createElement('p');
+                listOption.textContent = list;
+                listOption.classList.add('deletelistoption');
+                listOption.id = 'id' + (allLists.indexOf(list));
+                deleteListBox.appendChild(listOption);
+
+                listOption.addEventListener('click', deleteList);
+            }
+        }
+    
+    formFieldSet.appendChild(deleteListBox);
+    
+    const cancelBtn = document.createElement('button');
+    cancelBtn.classList.add('cancelformbtn');
+    cancelBtn.textContent = 'Cancel';
+    formFieldSet.appendChild(cancelBtn);
+
+    cancelBtn.addEventListener('click', function() {
+        formContainer.textContent = '';
+        formContainer.style.display = 'none'; 
+    })
+
+    newForm.appendChild(formFieldSet);
+    formContainer.appendChild(newForm);
+}
+function deleteList() {
+    let currentIndex = event.target.id
+        .split('')
+        .splice(2)
+        .join('');
+
+    let listName = event.target.textContent;
+    
+    allLists.splice(currentIndex, 1);
+
+    // Remove This Project Name from all tasks that have it
     for (let task of allTasks) {
-        if (+idOfTask === +task._id) {
-            chosenTask = task;
+        if (task.project === listName) {
+            task.project = undefined;
         }
     }
-    return allTasks.indexOf(chosenTask);
+
+    // Change What is Shown if the Deleted List is the One to be deleted
+    let calculatedTitle = document.querySelector('.calculatedtitle');
+    if (listName === calculatedTitle.textContent) {
+        showList();
+    }
+
+    const formContainer = document.querySelector('.formcontainer');
+    formContainer.textContent = '';
+    formContainer.style.display = 'none'; 
+
+    populateSidebar();
 }
 
-// Starting Visual
 
 
+
+
+
+
+// DISPLAY MAIN SECTION & FUNCTIONALITY
 function showList(list) {
     const listContainer = document.querySelector('.tasklist');
     listContainer.textContent = '';
@@ -52,12 +227,9 @@ function showList(list) {
     
 
     for (let task of allTasks) {
-        if (list === undefined) {
-        
-        } else if (task.project !== list) {
+        if ((task.project !== list) && (list !== undefined)) {
             continue;
-        } 
-       
+        }
 
         let item = document.createElement('div');
         item.classList.add('taskdiv');
@@ -71,21 +243,13 @@ function showList(list) {
         }
         item.appendChild(completionBox);
 
-        completionBox.addEventListener('click', function() {
-            let id = event.target.parentElement.id
-                .split('')
-                .splice(2)
-                .join('');
-            let index = findIndexOfTask(id);
-            allTasks[index].changeCompletion();
-            showList(list);
-        })
+        completionBox.addEventListener('click', markCompletion);
 
         let taskName = document.createElement('h3');
         taskName.textContent = task.name;
         item.appendChild(taskName);
 
-        taskName.addEventListener('dblclick', callExpander);
+        taskName.addEventListener('dblclick', expandTask);
 
         task.complete === false ? uncompletedDiv.appendChild(item) : completedDiv.appendChild(item);
     }
@@ -104,14 +268,176 @@ function showList(list) {
     }
 }
 
+function markCompletion() {
+    let id = event.target.parentElement.id
+        .split('')
+        .splice(2)
+        .join('');
 
-// Show Full List on Page Load
-showList();
+    let index = findIndexOfTask(id);
+    allTasks[index].changeCompletion();
 
-// Create Task Button Functionality
+    let calculatedTitle = document.querySelector('.calculatedtitle');
+    calculatedTitle.textContent === 'All Tasks' ? showList() : showList(calculatedTitle);
+}
 
-const createTaskBtn = document.querySelector('.createtask');
-createTaskBtn.addEventListener('click', function() {
+function expandTask(event) {
+    event.target.removeEventListener('dblclick', expandTask);
+
+    let allVisualTasks = document.querySelectorAll('.taskdiv');
+    for (let task of allVisualTasks) {
+        if (task.classList.contains('expanded')) {
+            closeMoreThanOne(task);
+        }
+    }
+  
+    let id =  event.target.parentElement.id
+                .split('')
+                .splice(2)
+                .join('');
+    let index = findIndexOfTask(id);
+    
+    let parent = event.target.parentElement;
+    parent.classList.add('expanded');
+    
+    let taskDate = document.createElement('p');
+    taskDate.classList.add('taskdate');
+    allTasks[index].dueDate === 'Invalid Date' ? taskDate.textContent = 'No due date' : taskDate.textContent = allTasks[index].dueDate;
+    parent.appendChild(taskDate);
+
+    let taskNotes = document.createElement('p');
+    taskNotes.classList.add('tasknotes');
+    taskNotes.textContent = allTasks[index].notes;
+    parent.appendChild(taskNotes);
+
+    let buttonsDiv = document.createElement('div');
+    buttonsDiv.classList.add('buttons');
+
+    let deleteBtn = document.createElement('button');
+    deleteBtn.classList.add('deletebtn');
+    deleteBtn.textContent = 'Delete Task';
+    buttonsDiv.appendChild(deleteBtn);
+
+    deleteBtn.addEventListener('click', function() {
+        deleteTask(index);
+
+        let listTitle = document.querySelector('.calculatedtitle');
+        listTitle.textContent === 'All Tasks' ? showList() : showList(listTitle.textContent);
+    })
+
+
+    let editBtn = document.createElement('button');
+    editBtn.classList.add('editbtn');
+    editBtn.textContent = 'Edit Task';
+    buttonsDiv.appendChild(editBtn);
+
+    parent.appendChild(buttonsDiv);
+
+    editBtn.addEventListener('click', function() {
+        createForm('edit');
+        const formContainer = document.querySelector('.formcontainer');
+
+        let newTaskName = document.querySelector('#taskname');
+        let newTaskDate = document.querySelector('#taskdate');
+        let newTaskPriority = document.querySelector('#taskpriority');
+        let newTaskNotes = document.querySelector('#tasknotes');
+
+        let newDate = new Date(allTasks[index].dueDate);
+        let year = newDate.getFullYear();
+        let month = String(newDate.getMonth() + 1).padStart(2, '0');
+        let day = String(newDate.getDate()).padStart(2, '0');
+        let formattedDate = `${year}-${month}-${day}`;
+
+        newTaskName.value = allTasks[index].name;
+        newTaskDate.value = formattedDate;
+        newTaskPriority.value = allTasks[index].priority;
+        newTaskNotes.value = allTasks[index].notes;
+
+        const submitFormBtn = document.querySelector('.submitformbtn');
+        submitFormBtn.addEventListener('click', function( ) {
+            event.preventDefault();
+
+            allTasks[index].name = newTaskName.value;
+            allTasks[index].dueDate = newTaskDate.value;
+            allTasks[index].priority = +newTaskPriority.value;
+            allTasks[index].notes = newTaskNotes.value;
+
+            formContainer.textContent = '';
+            formContainer.style.display = 'none';
+            
+
+            let listTitle = document.querySelector('.calculatedtitle');
+            listTitle.textContent === 'All Tasks' ? showList() : showList(listTitle.textContent);
+        });
+
+        const cancelFormBtn = document.querySelector('.cancelformbtn');
+        cancelFormBtn.addEventListener('click', function() {
+            event.preventDefault();
+            formContainer.textContent = '';
+            formContainer.style.display = 'none';
+            })
+    })
+
+    parent.addEventListener('dblclick', callUnExpander);
+
+    event.stopPropagation();
+
+}
+
+function callUnExpander(event) {
+    let selectedDiv;
+    event.target.id === '' ? selectedDiv = event.target.parentElement : selectedDiv = event.target;
+    
+    closeMoreThanOne(selectedDiv);
+    selectedDiv.removeEventListener('dblclick', callUnExpander);
+}
+
+function findIndexOfTask(idOfTask) {
+    let chosenTask;
+    for (let task of allTasks) {
+        if (+idOfTask === +task._id) {
+            chosenTask = task;
+        }
+    }
+    return allTasks.indexOf(chosenTask);
+}
+
+function deleteTask(idOfTask) {
+    let index = findIndexOfTask(idOfTask);
+    allTasks.splice(index, 1);
+}
+
+function closeMoreThanOne(selectedDiv) {
+    selectedDiv.classList.remove('expanded');
+    removeExpanded(selectedDiv);
+    selectedDiv.addEventListener('dblclick', expandTask);
+}
+
+function removeExpanded(selectedDiv) {
+    let taskDate = document.querySelector('.taskdate');
+    let taskNotes = document.querySelector('.tasknotes');
+    let buttonDiv = document.querySelector('.buttons');
+
+    selectedDiv.removeChild(taskDate);
+    selectedDiv.removeChild(taskNotes);
+    selectedDiv.removeChild(buttonDiv);
+}
+
+
+
+
+
+
+
+
+// CREATE A TASK SECTION
+
+ function activateCreateTaskBtn() {
+    const createTaskBtn = document.querySelector('.createtask');
+    createTaskBtn.addEventListener('click', createTask);
+}
+
+function createTask() {
     createForm('new');
     const formContainer = document.querySelector('.formcontainer');
 
@@ -148,9 +474,8 @@ createTaskBtn.addEventListener('click', function() {
         formContainer.textContent = '';
         formContainer.style.display = 'none'; 
     })
-})
+}
 
-// Create Add TAsk or Edit Task on the fly
 function createForm(type) {
     const formContainer = document.querySelector('.formcontainer'); 
     formContainer.style.display = 'block';  
@@ -268,334 +593,9 @@ function createForm(type) {
 }
 
 
-// Create List
-let createListBtn = document.querySelector('.createlistbtn');
-createListBtn.addEventListener('click', function() {
-    const formContainer = document.querySelector('.formcontainer');
-    formContainer.style.display = 'block';  
-    formContainer.textContent = '';   
 
-    const newForm = document.createElement('form');
+// ON PAGE LOAD
 
-    const formFieldSet = document.createElement('fieldset');
-
-    const formLegend = document.createElement('legend');
-    formLegend.textContent = 'Add a New List';
-    formFieldSet.appendChild(formLegend);
-
-    const formMain = document.createElement('div');
-    formMain.classList.add('formmain');
-
-    const nameLabel = document.createElement('label');
-    nameLabel.textContent = 'List Name: ';
-    nameLabel.setAttribute('for', 'listname');
-    formMain.appendChild(nameLabel);
-
-    const nameInput = document.createElement('input');
-    nameInput.setAttribute('type', 'text');
-    nameInput.id = 'listname';
-    nameInput.setAttribute('name', 'listname');
-    formMain.appendChild(nameInput);
-
-    formFieldSet.appendChild(formMain);
-
-    const submitBtn = document.createElement('button');
-    submitBtn.classList.add('submitformbtn');
-    submitBtn.textContent = 'Create It!'
-    formFieldSet.appendChild(submitBtn);
-    
-    const cancelBtn = document.createElement('button');
-    cancelBtn.classList.add('cancelformbtn');
-    cancelBtn.textContent = 'Cancel';
-    formFieldSet.appendChild(cancelBtn);
-    
-    newForm.appendChild(formFieldSet);
-
-    formContainer.appendChild(newForm);
-
-
-    submitBtn.addEventListener('click', function() {
-        event.preventDefault();
-
-        allLists.push(nameInput.value);
-
-
-        formContainer.textContent = '';
-        formContainer.style.display = 'none'; 
-
-        showListBtns();
-    })
-
-    const cancelFormBtn = document.querySelector('.cancelformbtn');
-    cancelFormBtn.addEventListener('click', function() {
-        formContainer.textContent = '';
-        formContainer.style.display = 'none'; 
-    })
-})
-
-// Display All Current Lists
-
-function showListBtns() {
-    let listContainer = document.querySelector('.createdprojectlist');
-    listContainer.textContent = '';
-
-    for (let list of allLists) {
-        let listBtn = document.createElement('p');
-        listBtn.classList.add('listbutton');
-        listBtn.textContent = list;
-        listBtn.id = list;
-
-        listContainer.appendChild(listBtn);
-
-        listBtn.addEventListener('click', function() {
-            showList(event.target.id);
-        })
-    }
-
-    const seeAllBtn = document.querySelector('#all');
-    seeAllBtn.addEventListener('click', function() {
-        showList();
-    })
-
-
-}
-
-showListBtns();
-
-// New Side Nav Options
-const navOpenBtn = document.querySelector('.opennavbtn');
-navOpenBtn.addEventListener('click', openNav)
-
-const navCloseBtn = document.querySelector('.closenavbtn');
-navCloseBtn.addEventListener('click', closeNav);
-
-
-function openNav() {
-    document.querySelector('.sidenav').style.width = '250px';
-    document.querySelector('#main').style.marginLeft = '250px';
-}
-
-function closeNav() {
-    document.querySelector('.sidenav').style.width = '0';
-    document.querySelector('#main').style.marginLeft = '0';
-}
-
-// Delete List Btn work
-
-const deleteListBtn = document.querySelector('.deletelistbtn');
-deleteListBtn.addEventListener('click', function() {
-    const formContainer = document.querySelector('.formcontainer');
-    formContainer.style.display = 'block';  
-    formContainer.textContent = '';   
-
-    const newForm = document.createElement('form');
-
-    const formFieldSet = document.createElement('fieldset');
-
-    const formLegend = document.createElement('legend');
-    formLegend.textContent = 'Which List Would You Like To Delete?';
-    formFieldSet.appendChild(formLegend);
-
-    const deleteListBox = document.createElement('div');
-    deleteListBox.classList.add('deletelistbox');
-
-        if (allLists == false) {
-            deleteListBox.textContent = 'You have no lists currently!';
-        } else {
-            for (let list of allLists) {
-                let listOption = document.createElement('p');
-                listOption.textContent = list;
-                listOption.classList.add('deletelistoption');
-                listOption.id = 'id' + (allLists.indexOf(list));
-                deleteListBox.appendChild(listOption);
-
-
-                listOption.addEventListener('click', deleteList);
-            }
-        }
-    
-    formFieldSet.appendChild(deleteListBox);
-    
-    const cancelBtn = document.createElement('button');
-    cancelBtn.classList.add('cancelformbtn');
-    cancelBtn.textContent = 'Cancel';
-    formFieldSet.appendChild(cancelBtn);
-
-    cancelBtn.addEventListener('click', function() {
-        formContainer.textContent = '';
-        formContainer.style.display = 'none'; 
-    })
-
-    newForm.appendChild(formFieldSet);
-    formContainer.appendChild(newForm);
-})
-
-function deleteList() {
-    let currentIndex = event.target.id
-        .split('')
-        .splice(2)
-        .join('');
-
-    let listName = event.target.textContent;
-    
-    allLists.splice(currentIndex, 1);
-
-    // Remove This Project Name from all tasks that have it
-    for (let task of allTasks) {
-        if (task.project === listName) {
-            task.project = undefined;
-        }
-    }
-
-    // Change What is Shown if the Deleted List is the One to be deleted
-    let calculatedTitle = document.querySelector('.calculatedtitle');
-    if (listName === calculatedTitle.textContent) {
-        showList();
-    }
-
-    const formContainer = document.querySelector('.formcontainer');
-    formContainer.textContent = '';
-    formContainer.style.display = 'none'; 
-
-    showListBtns();
-}
-
-
-// Task Expansion Work
-
-function callExpander(event) {
-    expandTask(event.target);
-}
-
-function expandTask(target) {
-    target.removeEventListener('dblclick', callExpander);
-
-    let allVisualTasks = document.querySelectorAll('.taskdiv');
-    for (let task of allVisualTasks) {
-        if (task.classList.contains('expanded')) {
-            closeMoreThanOne(task);
-        }
-    }
-  
-    let realID =  target.parentElement.id
-                .split('')
-                .splice(2)
-                .join('');
-    
-    let parent = target.parentElement;
-    parent.classList.add('expanded');
-    
-    let taskDate = document.createElement('p');
-    taskDate.classList.add('taskdate');
-    allTasks[realID].dueDate === 'Invalid Date' ? taskDate.textContent = 'No due date' : taskDate.textContent = allTasks[realID].dueDate;
-    parent.appendChild(taskDate);
-
-    let taskNotes = document.createElement('p');
-    taskNotes.classList.add('tasknotes');
-    taskNotes.textContent = allTasks[realID].notes;
-    parent.appendChild(taskNotes);
-
-    let buttonsDiv = document.createElement('div');
-    buttonsDiv.classList.add('buttons');
-
-    let deleteBtn = document.createElement('button');
-    deleteBtn.classList.add('deletebtn');
-    deleteBtn.textContent = 'Delete Task';
-    buttonsDiv.appendChild(deleteBtn);
-
-    deleteBtn.addEventListener('click', function() {
-        let index = findIndexOfTask(realID);
-        deleteTask(index);
-
-        let listTitle = document.querySelector('.calculatedtitle');
-        listTitle.textContent === 'All Tasks' ? showList() : showList(listTitle.textContent);
-    })
-
-
-    let editBtn = document.createElement('button');
-    editBtn.classList.add('editbtn');
-    editBtn.textContent = 'Edit Task';
-    buttonsDiv.appendChild(editBtn);
-
-    parent.appendChild(buttonsDiv);
-
-    editBtn.addEventListener('click', function() {
-        let index = findIndexOfTask(realID);
-
-        createForm('edit');
-        const formContainer = document.querySelector('.formcontainer');
-
-        let newTaskName = document.querySelector('#taskname');
-        let newTaskDate = document.querySelector('#taskdate');
-        let newTaskPriority = document.querySelector('#taskpriority');
-        let newTaskNotes = document.querySelector('#tasknotes');
-
-        let newDate = new Date(allTasks[index].dueDate);
-        let year = newDate.getFullYear();
-        let month = String(newDate.getMonth() + 1).padStart(2, '0');
-        let day = String(newDate.getDate()).padStart(2, '0');
-        let formattedDate = `${year}-${month}-${day}`;
-
-        newTaskName.value = allTasks[index].name;
-        newTaskDate.value = formattedDate;
-        newTaskPriority.value = allTasks[index].priority;
-        newTaskNotes.value = allTasks[index].notes;
-
-        const submitFormBtn = document.querySelector('.submitformbtn');
-        submitFormBtn.addEventListener('click', function( ) {
-            event.preventDefault();
-
-            allTasks[index].name = newTaskName.value;
-            allTasks[index].dueDate = newTaskDate.value;
-            allTasks[index].priority = +newTaskPriority.value;
-            allTasks[index].notes = newTaskNotes.value;
-
-            formContainer.textContent = '';
-            formContainer.style.display = 'none';
-            
-
-            let listTitle = document.querySelector('.calculatedtitle');
-            listTitle.textContent === 'All Tasks' ? showList() : showList(listTitle.textContent);
-
-            // This doesn't work - I would love this to stay expanded but not sure how
-            expandTask(target);
-            })
-
-        const cancelFormBtn = document.querySelector('.cancelformbtn');
-        cancelFormBtn.addEventListener('click', function() {
-            event.preventDefault();
-            formContainer.textContent = '';
-            formContainer.style.display = 'none';
-            })
-    })
-
-    parent.addEventListener('dblclick', callUnExpander);
-
-    event.stopPropagation();
-
-}
-
-function callUnExpander(event) {
-    let selectedDiv;
-    event.target.id === '' ? selectedDiv = event.target.parentElement : selectedDiv = event.target;
-    
-    closeMoreThanOne(selectedDiv);
-    selectedDiv.removeEventListener('dblclick', callUnExpander);
-}
-
-
-function closeMoreThanOne(selectedDiv) {
-    selectedDiv.classList.remove('expanded');
-    removeExpanded(selectedDiv);
-    selectedDiv.addEventListener('dblclick', callExpander);
-}
-
-function removeExpanded(selectedDiv) {
-    let taskDate = document.querySelector('.taskdate');
-    let taskNotes = document.querySelector('.tasknotes');
-    let buttonDiv = document.querySelector('.buttons');
-
-    selectedDiv.removeChild(taskDate);
-    selectedDiv.removeChild(taskNotes);
-    selectedDiv.removeChild(buttonDiv);
-}
+activateNavBtn();
+activateCreateTaskBtn();
+showList();
