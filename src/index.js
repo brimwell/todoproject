@@ -109,6 +109,8 @@ function createNewList() {
         formContainer.style.display = 'none'; 
 
         populateSidebar();
+        pushToStorage();
+        displayStorage();
     })
 
     const cancelFormBtn = document.querySelector('.cancelformbtn');
@@ -191,6 +193,8 @@ function deleteList() {
     formContainer.style.display = 'none'; 
 
     populateSidebar();
+    pushToStorage();
+    displayStorage();
 }
 
 
@@ -279,6 +283,8 @@ function markCompletion() {
 
     let calculatedTitle = document.querySelector('.calculatedtitle');
     calculatedTitle.textContent === 'All Tasks' ? showList() : showList(calculatedTitle);
+
+    pushToStorage();
 }
 
 function expandTask(event) {
@@ -368,6 +374,8 @@ function expandTask(event) {
 
             let listTitle = document.querySelector('.calculatedtitle');
             listTitle.textContent === 'All Tasks' ? showList() : showList(listTitle.textContent);
+
+            pushToStorage();
         });
 
         const cancelFormBtn = document.querySelector('.cancelformbtn');
@@ -405,6 +413,9 @@ function findIndexOfTask(idOfTask) {
 function deleteTask(idOfTask) {
     let index = findIndexOfTask(idOfTask);
     allTasks.splice(index, 1);
+
+    pushToStorage();
+    displayStorage();
 }
 
 function closeMoreThanOne(selectedDiv) {
@@ -466,7 +477,8 @@ function createTask() {
         calculatedTitle.textContent === 'All Tasks' ? showList() : showList(calculatedTitle.textContent); 
 
         formContainer.style.display = 'none'; 
-        
+        pushToStorage();
+        displayStorage();
     })
 
     const cancelFormBtn = document.querySelector('.cancelformbtn');
@@ -593,9 +605,73 @@ function createForm(type) {
 }
 
 
+// TESTING LOCAL STORAGE
+
+function pushToStorage() {
+    localStorage.clear();
+    let taskCount = 0;
+    for (let task of allTasks) {
+        localStorage.setItem(`${taskCount}`, JSON.stringify(task));
+        taskCount++;
+    }
+
+    for (let list of allLists) {
+        localStorage.setItem(`List${taskCount}`, list);
+        taskCount++;
+    }
+}
+
+function displayStorage() {
+    for (let i = 0; i < localStorage.length; i++) {
+        if (localStorage.getItem(`${i}`)) {
+            console.log(JSON.parse(localStorage.getItem(`${i}`)));
+        } else {
+            console.log(localStorage.getItem(`List${i}`));
+        }
+    }
+    console.log(localStorage.length);
+}
+
+function addStorageToArr() {
+    if (localStorage.getItem('0')) {
+        let arr = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            if (localStorage.getItem(`${i}`)) {
+                arr.push(JSON.parse(localStorage.getItem(`${i}`)));
+            }
+        }
+    convertToAllTasks(arr);    
+    }
+}
+
+function convertToAllTasks(arr) {
+    for (let item of arr) {
+        new Task(item.name, item.priority, item.dueDate, item.notes, item.project);
+    }
+}
+
+
+
 
 // ON PAGE LOAD
-
+addStorageToArr();
 activateNavBtn();
 activateCreateTaskBtn();
 showList();
+
+
+
+
+
+
+
+
+
+
+
+
+// new Task('Clean Bedroom', 2, '7/27/25', 'needs to be done');
+// new Task('Wash Dishes', 3, '7/27/25', '');
+// new Task('Buy birthday card for Dad', 1, '7/11/25', 'I need to send this out today if I want it to get there by his birthday.');
+// new Task('Call Jerry about job', 2, '7/15/25', 'Good lead, possibly');
+// new Task('Fix the PS5 controller', 4, '7/31/25', 'for Billys birthday');

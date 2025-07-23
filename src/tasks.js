@@ -30,16 +30,16 @@ class Task {
     }
 }
 
-new Task('Clean Bedroom', 2, '7/27/25', 'needs to be done');
-new Task('Wash Dishes', 3, '7/27/25', '');
-new Task('Buy birthday card for Dad', 1, '7/11/25', 'I need to send this out today if I want it to get there by his birthday.');
-new Task('Call Jerry about job', 2, '7/15/25', 'Good lead, possibly');
-new Task('Fix the PS5 controller', 4, '7/31/25', 'for Billys birthday');
+// new Task('Clean Bedroom', 2, '7/27/25', 'needs to be done');
+// new Task('Wash Dishes', 3, '7/27/25', '');
+// new Task('Buy birthday card for Dad', 1, '7/11/25', 'I need to send this out today if I want it to get there by his birthday.');
+// new Task('Call Jerry about job', 2, '7/15/25', 'Good lead, possibly');
+// new Task('Fix the PS5 controller', 4, '7/31/25', 'for Billys birthday');
 
-allTasks[0].changeCompletion();
+// allTasks[0].changeCompletion();
 
-allTasks[0].project = 'Test One';
-allTasks[1].project = 'Work';
-allTasks[2].project = 'Home';
+// allTasks[0].project = 'Test One';
+// allTasks[1].project = 'Work';
+// allTasks[2].project = 'Home';
 
 export { allTasks, Task };
