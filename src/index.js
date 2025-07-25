@@ -3,7 +3,7 @@ import { allTasks, Task } from './tasks';
 
 
 //  ON PAGE LOAD -- TEST ONLY
-let allLists = ['Test One', 'Work', 'Home'];
+let allLists = [];
 
 // SIDENAV OPEN AND CLOSE FUNCTIONS
     // ON PAGE LOAD
@@ -109,8 +109,8 @@ function createNewList() {
         formContainer.style.display = 'none'; 
 
         populateSidebar();
+        localStorage.clear();
         pushToStorage();
-        displayStorage();
     })
 
     const cancelFormBtn = document.querySelector('.cancelformbtn');
@@ -193,8 +193,8 @@ function deleteList() {
     formContainer.style.display = 'none'; 
 
     populateSidebar();
+    localStorage.clear();
     pushToStorage();
-    displayStorage();
 }
 
 
@@ -329,6 +329,9 @@ function expandTask(event) {
 
         let listTitle = document.querySelector('.calculatedtitle');
         listTitle.textContent === 'All Tasks' ? showList() : showList(listTitle.textContent);
+
+        localStorage.clear();
+        pushToStorage();
     })
 
 
@@ -347,6 +350,9 @@ function expandTask(event) {
         let newTaskDate = document.querySelector('#taskdate');
         let newTaskPriority = document.querySelector('#taskpriority');
         let newTaskNotes = document.querySelector('#tasknotes');
+        let chosenProject = `option${allTasks[index].project}`;
+        let newTaskProject = document.getElementById(chosenProject);
+        let projectSelection = document.querySelector('#taskproject');
 
         let newDate = new Date(allTasks[index].dueDate);
         let year = newDate.getFullYear();
@@ -358,6 +364,9 @@ function expandTask(event) {
         newTaskDate.value = formattedDate;
         newTaskPriority.value = allTasks[index].priority;
         newTaskNotes.value = allTasks[index].notes;
+        if (allTasks[index].project !== undefined) {
+            newTaskProject.selected = true;
+        }
 
         const submitFormBtn = document.querySelector('.submitformbtn');
         submitFormBtn.addEventListener('click', function( ) {
@@ -367,6 +376,7 @@ function expandTask(event) {
             allTasks[index].dueDate = newTaskDate.value;
             allTasks[index].priority = +newTaskPriority.value;
             allTasks[index].notes = newTaskNotes.value;
+            projectSelection.value === 'none' ? allTasks[index].project = undefined : allTasks[index].project = projectSelection.value;
 
             formContainer.textContent = '';
             formContainer.style.display = 'none';
@@ -386,6 +396,7 @@ function expandTask(event) {
             })
     })
 
+    console.log(parent);
     parent.addEventListener('dblclick', callUnExpander);
 
     event.stopPropagation();
@@ -395,6 +406,7 @@ function expandTask(event) {
 function callUnExpander(event) {
     let selectedDiv;
     event.target.id === '' ? selectedDiv = event.target.parentElement : selectedDiv = event.target;
+    console.log(selectedDiv);
     
     closeMoreThanOne(selectedDiv);
     selectedDiv.removeEventListener('dblclick', callUnExpander);
@@ -469,7 +481,7 @@ function createTask() {
         let offset = date.getTimezoneOffset();
         date.setMinutes(offset);
 
-        new Task(newTaskName.value, +newTaskPriority.value, date, newTaskNotes.value, projectVal);
+        new Task(newTaskName.value, +newTaskPriority.value, date, newTaskNotes.value, projectVal, false);
 
         formContainer.textContent = '';
 
@@ -477,8 +489,8 @@ function createTask() {
         calculatedTitle.textContent === 'All Tasks' ? showList() : showList(calculatedTitle.textContent); 
 
         formContainer.style.display = 'none'; 
+        localStorage.clear();
         pushToStorage();
-        displayStorage();
     })
 
     const cancelFormBtn = document.querySelector('.cancelformbtn');
@@ -582,6 +594,7 @@ function createForm(type) {
         for (let list of allLists) {
             const listOption = document.createElement('option');
             listOption.textContent = list;
+            listOption.id = `option${list}`;
             listOption.setAttribute('value', list);
             projectInput.appendChild(listOption);
         }
@@ -605,10 +618,12 @@ function createForm(type) {
 }
 
 
-// TESTING LOCAL STORAGE
+
+
+
+// ADDING & PULLING FROM LOCAL STORAGE
 
 function pushToStorage() {
-    localStorage.clear();
     let taskCount = 0;
     for (let task of allTasks) {
         localStorage.setItem(`${taskCount}`, JSON.stringify(task));
@@ -619,25 +634,20 @@ function pushToStorage() {
         localStorage.setItem(`List${taskCount}`, list);
         taskCount++;
     }
+
+    console.log(allLists);
 }
 
-function displayStorage() {
-    for (let i = 0; i < localStorage.length; i++) {
-        if (localStorage.getItem(`${i}`)) {
-            console.log(JSON.parse(localStorage.getItem(`${i}`)));
-        } else {
-            console.log(localStorage.getItem(`List${i}`));
-        }
-    }
-    console.log(localStorage.length);
-}
 
-function addStorageToArr() {
+
+function addStorageToMasterLists() {
     if (localStorage.getItem('0')) {
         let arr = [];
         for (let i = 0; i < localStorage.length; i++) {
             if (localStorage.getItem(`${i}`)) {
                 arr.push(JSON.parse(localStorage.getItem(`${i}`)));
+            } else if (localStorage.getItem(`List${i}`)) {
+                allLists.push(localStorage.getItem(`List${i}`));
             }
         }
     convertToAllTasks(arr);    
@@ -646,7 +656,7 @@ function addStorageToArr() {
 
 function convertToAllTasks(arr) {
     for (let item of arr) {
-        new Task(item.name, item.priority, item.dueDate, item.notes, item.project);
+        new Task(item.name, item.priority, item._dueDate, item.notes, item.project, item.complete);
     }
 }
 
@@ -654,10 +664,16 @@ function convertToAllTasks(arr) {
 
 
 // ON PAGE LOAD
-addStorageToArr();
+
+
+addStorageToMasterLists();
 activateNavBtn();
 activateCreateTaskBtn();
 showList();
+
+
+
+
 
 
 
